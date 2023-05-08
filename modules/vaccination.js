@@ -10,3 +10,6 @@ class Vaccination {
     }
   }
   
+  module.exports = {
+    Vaccination : Vaccination
+  }

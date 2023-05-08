@@ -1,26 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const database= require('./database')
-const patient = require('./patients');
-const vaccination = require('./vaccination');
-const mysql = require('mysql2');
+const database= require('./database').Database;
+const patient = require('./patients').Patient;
+const vaccination = require('./vaccination').Vaccination;
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'mypassword',
-  database: 'CovidSystem'
-});
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-database.create_db();
-database.create_patients_table();
-database.create_vaccinations_table();
 
 app.post('/ListPatient', (req, res) => {
     if (req.is('json')) {
@@ -31,19 +20,16 @@ app.post('/ListPatient', (req, res) => {
             }
         }
         const new_patient = new patient(
-            data['ID'], data['FirstName'], data['LastName'],
-            data['City'], data['Street'], data['HouseNumber'],
-            data['MobilePhoneNumber'], data['PhoneNumber'],
-            data['BirthDate'], data['SickStart'], data['SickEnd']
+            data['FirstName'], data['LastName'],data['Birthdate'],
+            data['City'], data['Street'], data['HomeNumber'],
+            data['MobilePhone'], data['Phone'],
+            data['StartSick'], data['EndSick'],data['ID']
         );
-        try {
-            // if (db_instance.get_patient(new_patient.ID) !== null) {
-            //     res.status(400).json({ message: 'Patient already exists' });
-            // }
-            db_instance.add_patient(new_patient);
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({ error: e.toString() });
+        try { database.add_patient(new_patient);
+        } 
+        catch (e) {
+          console.log(e);
+          res.status(500).json({ error: e.toString() });
         }
         res.status(200).send('OK');
     }
@@ -61,11 +47,12 @@ app.post('/ListVaccination', (req, res) => {
             res.status(400).json({ message: 'Vaccination number must be between 1 and 4' });
         }
         const new_vaccination = new vaccination(
-            data['PatientID'], data['Date'], data['VaccinationNumber']
+            data['VaccinationDate'], data['VaccinationNumber'],data['PatientID']
         );
-        try {
-            db_instance.add_vaccination(new_vaccination);
-        } catch (e) {
+        try {database.add_vaccination(new_vaccination);
+        } 
+        
+        catch (e) {
             console.log(e);
             res.status(500).json({ error: e.toString() });
         }
@@ -73,26 +60,19 @@ app.post('/ListVaccination', (req, res) => {
     }
 });
 
-app.get('/GetPatient', (req, res) => {
+app.get('/GetPatient', async (req, res) => {
+    let the_patient = {};
     try {
         const id = req.query.id;
-        const the_patient_raw = db_instance.get_patient(id);
+        the_patient = await database.get_patient(id);
         const pat_names = patient.get_names();
-        const the_patient = {};
-        for (let x = 0; x < pat_names.length; x++) {
-            the_patient[pat_names[x]] = the_patient_raw[x];
-        }
-        const vaccs = db_instance.get_vaccinations(id);
+        const vaccs = await database.get_vaccinations(id);
         if (vaccs === null) {
             the_patient['Vaccinations'] = [];
         } else {
             const the_vaccs = [];
             for (let x = 0; x < vaccs.length; x++) {
-                const the_vac = {};
-                for (let y = 0; y < vaccination.get_names().length; y++) {
-                    the_vac[vaccination.get_names()[y]] = vaccs[x][y];
-                }
-                the_vaccs.push(the_vac);
+                the_vaccs.push(vaccs[x]);
             }
             the_patient['Vaccinations'] = the_vaccs;
         }
@@ -107,8 +87,13 @@ app.get('/GetPatient', (req, res) => {
     
   });
 
+    app.listen(3001, () => {
+        console.log('Server listening on port 3001');
+      });
 
-app.listen(3000, () => {
-  console.log('Server listening on port 3000');
-});
-
+      /*
+    await database.create_db('CovidSystem'); 
+    await database.create_db();
+    await database.create_patients_table();
+    await database.create_vaccinations_table();
+ */

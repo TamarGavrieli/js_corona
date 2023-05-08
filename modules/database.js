@@ -2,11 +2,14 @@ const mysql = require('mysql2/promise');
 
 class Database {
 
-    static database = mysql.createConnection({
+    static database = mysql.createPool({
         host: 'localhost',
         user: 'root',
         password: 'mypassword',
-        database: 'CovidSystem'
+        database: 'CovidSystem',
+        waitForConnections : true,
+        connectionLimit : 10,
+        queueLimit : 0
       });
 
     static async create_db(db_name="CovidSystem") {
@@ -34,7 +37,7 @@ class Database {
             constraint ID primary key (ID)
             
         );`;
-        await this.database.execute(query);
+        await this.database.query(query);
     }
 
     static async create_vaccinations_table() {
@@ -48,7 +51,7 @@ class Database {
             constraint Vaccinations primary key (PatientID, VaccinationNumber),
             constraint PatientID foreign key (PatientID) references CovidSystem.Patients (ID)
         );`;
-        await this.database.execute(query);
+        await this.database.query(query);
     }
 
     static async add_patient(patient) {
@@ -65,7 +68,7 @@ class Database {
             EndSick,
             ID
         ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
-        await this.database.execute(query, [
+        await this.database.query(query, [
              patient.FirstName, patient.LastName, patient.City, patient.Street, patient.HomeNumber,
             patient.MobilePhone, patient.Phone, patient.Birthdate, patient.StartSick, patient.EndSick,patient.ID
         ]);
@@ -77,38 +80,42 @@ class Database {
             VaccinationNumber,
             PatientID
         ) values (?, ?, ?);`;
-        await this.database.execute(query, [vaccination.VaccinationDate, vaccination.VaccinationNumber, vaccination.PatientID]);
+        await this.database.query(query, [vaccination.VaccinationDate, vaccination.VaccinationNumber, vaccination.PatientID]);
     }
 
     static async check_table_exists(table_name, scheme_name="CovidSystem") {
-        const [rows] = await this.database.execute(`select table_name from information_schema.tables where table_schema = ? and table_name = ?;`, [scheme_name, table_name]);
+        const [rows] = await this.database.query(`select table_name from information_schema.tables where table_schema = ? and table_name = ?;`, [scheme_name, table_name]);
         return rows.length !== 0;
     }
 
     static async check_scheme_exists(scheme_name) {
-        const [rows] = await this.database.execute(`select schema_name from information_schema.schemata where schema_name = ?;`, [scheme_name]);
+        const [rows] = await this.database.query(`select schema_name from information_schema.schemata where schema_name = ?;`, [scheme_name]);
         return rows.length !== 0;
     }
 
     static async get_patient(ID) {
-        const [rows] = await this.database.execute(`select * from CovidSystem.Patients where ID = ?;`, [ID]);
+        const [rows] = await Database.database.query('select * from CovidSystem.Patients where ID = '+ ID +';');
         return rows[0];
     }
 
     static async get_vaccinations(PatientID) {
-        const [rows] = await this.database.execute(`select * from CovidSystem.Vaccinations where PatientID = ?;`, [PatientID]);
+        const [rows] = await this.database.query('select * from CovidSystem.Vaccinations where PatientID = ' + PatientID +';');
         return rows;
     }
 
 
 
     static async get_all_patient(ID) {
-        const [rows] = await this.database.execute(`select * from CovidSystem.Patients where ID = ?;`, [ID]);
+        const [rows] = await this.database.query(`select * from CovidSystem.Patients where ID = ?;`, [ID]);
         return rows[0];
     }
 
     static async get_all_vaccinations(PatientID) {
-        const [rows] = await this.database.execute(`select * from CovidSystem.Vaccinations where PatientID = ?;`, [PatientID]);
+        const [rows] = await this.database.query(`select * from CovidSystem.Vaccinations where PatientID = ?;`, [PatientID]);
         return rows;
     }
+}
+
+module.exports = {
+    Database: Database
 }

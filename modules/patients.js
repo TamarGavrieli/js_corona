@@ -18,3 +18,7 @@ class Patient {
         return ["FirstName", "LastName", "BirthDate", "City", "Street", "HomeNumber", "MobilePhone", "Phone",  "StartSick", "EndSick", "ID"];
     }
 }
+
+module.exports = {
+    Patient : Patient
+}

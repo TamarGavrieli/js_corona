@@ -2,7 +2,7 @@ const database= require('./database')
 const patient = require('./patients');
 const vaccination = require('./vaccination');
 
-
+const port = 3001
 
 async function add_patient(patt){
     const body = {
@@ -19,7 +19,7 @@ async function add_patient(patt){
         'ID': patt.ID
     }
 
-    const response = await fetch('http://localhost:5000/ListPatient', {
+    const response = await fetch('http://localhost:' + port + '/ListPatient', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -36,7 +36,7 @@ async function add_vaccination(vacc){
         'PatientID': vacc.PatientID
     }
 
-    const response = await fetch('http://localhost:3000/ListVaccination', {
+    const response = await fetch('http://localhost:' + port + '/ListVaccination', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -46,14 +46,17 @@ async function add_vaccination(vacc){
 }
 
 async function getPatient(id) {
-    const response = await fetch(`http://localhost:3000/GetPatient?id=${id}`);
+    const response = await fetch('http://localhost:' + port + '/GetPatient?id=' + id);
     console.log(response.status);
     console.log(await response.text());
 }
   
 
 async function getVaccination(patientID) {
-    const response = await fetch(`http://localhost:3000/GetVaccinations?id=${patientID}`);
+    const response = await fetch('http://localhost:' + port + '/GetVaccinations?id=${patientID}');
     console.log(response.status);
     console.log(await response.text());
 }
+
+console.log(getPatient(322533977));
+
