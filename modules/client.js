@@ -53,10 +53,24 @@ async function getPatient(id) {
   
 
 async function getVaccination(patientID) {
-    const response = await fetch('http://localhost:' + port + '/GetVaccinations?id=${patientID}');
+    const response = await fetch('http://localhost:' + port + '/GetVaccinations?patientID=' + patientID);
     console.log(response.status);
     console.log(await response.text());
 }
 
-console.log(getPatient(322533977));
+async function getAllPatient() {
+    console.log('1');
+    const response = await fetch('http://localhost:' + port + '/GetAllPatient');
+    console.log(response.status);
+    console.log(await response.text());
+}
 
+
+
+async function getAllVaccination() {
+    const response = await fetch('http://localhost:' + port + '/GetAllVaccinations');
+    console.log(response.status);
+    console.log(await response.text());
+}
+
+console.log(getAllPatient());

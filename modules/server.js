@@ -69,7 +69,9 @@ app.get('/GetPatient', async (req, res) => {
         const vaccs = await database.get_vaccinations(id);
         if (vaccs === null) {
             the_patient['Vaccinations'] = [];
-        } else {
+        } 
+        else 
+        {
             const the_vaccs = [];
             for (let x = 0; x < vaccs.length; x++) {
                 the_vaccs.push(vaccs[x]);
@@ -87,13 +89,82 @@ app.get('/GetPatient', async (req, res) => {
     
   });
 
+
+  app.get('/GetVaccinations', async (req, res) => {
+    let the_vac = {};
+    try {
+        const id = req.query.patientID;
+        console.log(id);
+        const vac_names = vaccination.get_names();
+        const vaccs = await database.get_vaccinations(id);
+        if (vaccs === null) {
+            the_vac['Vaccinations'] = [];
+        } else {
+            const the_vaccs = [];
+            for (let x = 0; x < vaccs.length; x++) {
+                the_vaccs.push(vaccs[x]);
+            }
+            the_vac = the_vaccs;
+        }
+    } 
+    catch (e) {
+        console.log(e);
+        res.status(500).json({ error: e.toString() });
+    }
+    if (vaccination===null){
+        res.status(404).json({ message: e.toString() });
+    } 
+    res.status(200).json({the_vac});     
+    
+  });
+
+
+  
+  app.get('/GetAllPatient', async (req, res) => {
+    console.log('2');
+    let the_patient = {};
+    try {
+        the_patient = await database.get_all_patient();
+        const pat_names = patient.get_names();
+        if (pat_names === null) {
+            the_patient = [];
+        } 
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ error: e.toString() });
+    }
+    if (patient===null){
+      res.status(404).json({ message: e.toString() });
+    } 
+    res.status(200).json({ the_patient });     
+    
+  });
+
+  app.get('/GetAllVaccinations', async (req, res) => {
+    console.log('2');
+    let the_vac = {};
+    try {
+        the_vac = await database.get_all_vaccinations();
+        const vac_names = vaccination.get_names();
+        if (vac_names === null) {
+            the_vac = [];
+        } 
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ error: e.toString() });
+    }
+    if (patient===null){
+      res.status(404).json({ message: e.toString() });
+    } 
+    res.status(200).json({ the_vac });     
+    
+  });
+
+
+
+
     app.listen(3001, () => {
         console.log('Server listening on port 3001');
       });
 
-      /*
-    await database.create_db('CovidSystem'); 
-    await database.create_db();
-    await database.create_patients_table();
-    await database.create_vaccinations_table();
- */
+    

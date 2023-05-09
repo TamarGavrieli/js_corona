@@ -68,7 +68,7 @@ class Database {
             EndSick,
             ID
         ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
-        await this.database.query(query, [
+        await Database.database.query(query, [
              patient.FirstName, patient.LastName, patient.City, patient.Street, patient.HomeNumber,
             patient.MobilePhone, patient.Phone, patient.Birthdate, patient.StartSick, patient.EndSick,patient.ID
         ]);
@@ -80,16 +80,16 @@ class Database {
             VaccinationNumber,
             PatientID
         ) values (?, ?, ?);`;
-        await this.database.query(query, [vaccination.VaccinationDate, vaccination.VaccinationNumber, vaccination.PatientID]);
+        await Database.database.query(query, [vaccination.VaccinationDate, vaccination.VaccinationNumber, vaccination.PatientID]);
     }
 
     static async check_table_exists(table_name, scheme_name="CovidSystem") {
-        const [rows] = await this.database.query(`select table_name from information_schema.tables where table_schema = ? and table_name = ?;`, [scheme_name, table_name]);
+        const [rows] = await Database.database.query(`select table_name from information_schema.tables where table_schema = ? and table_name = ?;`, [scheme_name, table_name]);
         return rows.length !== 0;
     }
 
     static async check_scheme_exists(scheme_name) {
-        const [rows] = await this.database.query(`select schema_name from information_schema.schemata where schema_name = ?;`, [scheme_name]);
+        const [rows] = await Database.database.query(`select schema_name from information_schema.schemata where schema_name = ?;`, [scheme_name]);
         return rows.length !== 0;
     }
 
@@ -99,19 +99,19 @@ class Database {
     }
 
     static async get_vaccinations(PatientID) {
-        const [rows] = await this.database.query('select * from CovidSystem.Vaccinations where PatientID = ' + PatientID +';');
+        const [rows] = await Database.database.query('select * from CovidSystem.Vaccinations where PatientID = ' + PatientID +';');
         return rows;
     }
 
 
 
-    static async get_all_patient(ID) {
-        const [rows] = await this.database.query(`select * from CovidSystem.Patients where ID = ?;`, [ID]);
-        return rows[0];
+    static async get_all_patient() {
+        const [rows] = await Database.database.query('select * from CovidSystem.Patients;');
+        return rows;
     }
 
-    static async get_all_vaccinations(PatientID) {
-        const [rows] = await this.database.query(`select * from CovidSystem.Vaccinations where PatientID = ?;`, [PatientID]);
+    static async get_all_vaccinations() {
+        const [rows] = await Database.database.query('select * from CovidSystem.Vaccinations;');
         return rows;
     }
 }
