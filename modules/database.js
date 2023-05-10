@@ -144,7 +144,7 @@ class Database {
             vaccination.VaccinationNumber,
             vaccination.PatientID
           ];
-          console.log(patient, 'patient');
+          
 
           await Database.database.query('INSERT INTO CovidSystem.Vaccinations (VaccinationDate, VaccinationNumber, PatientID) VALUES \
           (\"'+ values[0]+ '\",'+ values[1]+ ',\"'+ values[2]+'\")');

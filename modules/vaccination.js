@@ -1,8 +1,8 @@
 class Vaccination {
-    constructor(PatientID, VaccinationDate, VaccinationNumber) {
-      this.PatientID = PatientID;
+    constructor(VaccinationDate, VaccinationNumber, PatientID) {
       this.VaccinationDate = VaccinationDate;
       this.VaccinationNumber = VaccinationNumber;
+      this.PatientID = PatientID;
     }
   
     static get_names() {
