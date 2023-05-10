@@ -2,6 +2,11 @@ const database= require('./database')
 const patient = require('./patients');
 const vaccination = require('./vaccination');
 
+
+
+
+
+
 const port = 3001
 
 async function add_patient(patt){
@@ -73,4 +78,26 @@ async function getAllVaccination() {
     console.log(await response.text());
 }
 
-console.log(getAllPatient());
+
+async function deleteAllVaccination() {
+    const response = await fetch('http://localhost:' + port + '/DeleteAllVaccinations');
+    console.log(response.status);
+    console.log(await response.text());
+}
+
+
+async function deleteVaccination(patientID) {
+    const response = await fetch('http://localhost:' + port + '/DeleteVaccinations?patientID=' + patientID,   {method: 'DELETE'});
+    console.log(response);
+    console.log(response.status);
+}
+
+
+
+
+async function deletePatient(id) {
+    const response = await fetch('http://localhost:' + port + '/DeletePatient?id=' + id,   {method: 'DELETE'});
+    console.log(response);
+    console.log(response.status);
+}
+console.log(deletePatient(123456789));

@@ -161,10 +161,80 @@ app.get('/GetPatient', async (req, res) => {
   });
 
 
+  
+  app.delete('/DeleteAllVaccinations', async (req, res) => {
+    console.log('Deleting table');  
+    try {
+      await database.delete_all_vaccinations();
+      res.status(200).json({ message:'Table deleted successfully' });
+    } 
+    catch (e) {
+      console.log(e);
+      res.status(500).json({ error: e.toString() });
+    }
+  });
+  
+
+  
+  app.delete('/DeleteVaccinations', async (req, res) => { 
+    try {
+
+      const id = req.query.patientID;
+      console.log(id);
+      const vaccs = await database.get_vaccinations(id);
+      console.log(vaccs);
+      if (vaccs.length === 0) {
+        console.log('No vaccinations for the patient '+id);
+       }  
+       else {
+        await database.delete_vaccinations(id);
+        console.log('The vaccinations of patient '+ id + ' have been deleted') ;  
+       }   
+    } 
+    catch (e) {
+      console.log(e);
+      res.status(500).json({ error: e.toString() });
+    }
+});
 
 
-    app.listen(3001, () => {
-        console.log('Server listening on port 3001');
-      });
+app.delete('/DeletePatient', async (req, res) => { 
+    try {
+      const id = req.query.id;
+      console.log(id);
+      the_patient = await database.get_patient(id);
+      //const pat_names = patient.get_names();
+      //console.log(the_patient);
+      if (the_patient.length === 0) {
+        console.log('No patient with the id '+id);
+       }  
+       else {
+        await database.delete_vaccinations(id);
+        await database.delete_patients(id);
+        console.log('The patient with id '+ id + ' have been deleted') ;  
+       }   
+    } 
+    catch (e) {
+      console.log(e);
+      res.status(500).json({ error: e.toString() });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.listen(3001, () => {
+    console.log('Server listening on port 3001');
+});
 
     

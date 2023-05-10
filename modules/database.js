@@ -114,6 +114,24 @@ class Database {
         const [rows] = await Database.database.query('select * from CovidSystem.Vaccinations;');
         return rows;
     }
+
+
+    static async delete_all_vaccinations() {
+        await Database.database.query('DELETE FROM CovidSystem.Vaccinations;');
+        
+    }
+
+
+    static async delete_vaccinations(PatientID) {
+        await Database.database.query('DELETE FROM CovidSystem.Vaccinations where PatientID = ' + PatientID +';');
+        
+    }
+
+    static async delete_patients(id) {
+        await Database.database.query('DELETE FROM CovidSystem.Patients where ID = ' + id +';');
+        
+    }
+
 }
 
 module.exports = {
