@@ -11,28 +11,38 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-app.post('/ListPatient', (req, res) => {
-    if (req.is('json')) {
+app.post('/InsertPatient' ,async (req, res) => {
+    try 
+    {
         const data = req.body;
-        for (const name of patient.get_names()) {
-            if (!(name in data)) {
-                res.status(400).send('Bad Request');
-            }
+        console.log(data)
+        if(patient.get_names().some(name=>!data[name])){
+            res.status(400).send('Bad Request');
+            return;
         }
+        // for (const name of patient.get_names()) {
+        //     console.log(data);
+        //     if (!data[name]) {
+        //         res.status(400).send('Bad Request');
+        //         return;
+        //     }
+        // }
+        
         const new_patient = new patient(
             data['FirstName'], data['LastName'],data['Birthdate'],
             data['City'], data['Street'], data['HomeNumber'],
             data['MobilePhone'], data['Phone'],
             data['StartSick'], data['EndSick'],data['ID']
         );
-        try { database.add_patient(new_patient);
-        } 
-        catch (e) {
-          console.log(e);
-          res.status(500).json({ error: e.toString() });
-        }
-        res.status(200).send('OK');
+        console.log(new_patient);
+        database.insert_patient(new_patient);
+    }       
+    catch (e) {
+        console.log(e);
+        res.status(500).json({ error: e.toString() });
+        return;        
     }
+    res.status(200).send('OK');
 });
 
 app.post('/ListVaccination', (req, res) => {
@@ -121,7 +131,6 @@ app.get('/GetPatient', async (req, res) => {
 
   
   app.get('/GetAllPatient', async (req, res) => {
-    console.log('2');
     let the_patient = {};
     try {
         the_patient = await database.get_all_patient();
@@ -223,18 +232,8 @@ app.delete('/DeletePatient', async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-app.listen(3001, () => {
-    console.log('Server listening on port 3001');
+app.listen(3005, () => {
+    console.log('Server listening on port 3005');
 });
 
     

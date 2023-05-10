@@ -54,35 +54,6 @@ class Database {
         await this.database.query(query);
     }
 
-    static async add_patient(patient) {
-        const query = `insert into CovidSystem.Patients (
-            FirstName,
-            LastName,
-            City,
-            Street,
-            HomeNumber,
-            MobilePhone,
-            Phone,
-            Birthdate,
-            StartSick,
-            EndSick,
-            ID
-        ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
-        await Database.database.query(query, [
-             patient.FirstName, patient.LastName, patient.City, patient.Street, patient.HomeNumber,
-            patient.MobilePhone, patient.Phone, patient.Birthdate, patient.StartSick, patient.EndSick,patient.ID
-        ]);
-    }
-
-    static async add_vaccination(vaccination) {
-        const query = `insert into CovidSystem.Vaccinations (
-            VaccinationDate,
-            VaccinationNumber,
-            PatientID
-        ) values (?, ?, ?);`;
-        await Database.database.query(query, [vaccination.VaccinationDate, vaccination.VaccinationNumber, vaccination.PatientID]);
-    }
-
     static async check_table_exists(table_name, scheme_name="CovidSystem") {
         const [rows] = await Database.database.query(`select table_name from information_schema.tables where table_schema = ? and table_name = ?;`, [scheme_name, table_name]);
         return rows.length !== 0;
@@ -92,6 +63,7 @@ class Database {
         const [rows] = await Database.database.query(`select schema_name from information_schema.schemata where schema_name = ?;`, [scheme_name]);
         return rows.length !== 0;
     }
+
 
     static async get_patient(ID) {
         const [rows] = await Database.database.query('select * from CovidSystem.Patients where ID = '+ ID +';');
@@ -131,6 +103,42 @@ class Database {
         await Database.database.query('DELETE FROM CovidSystem.Patients where ID = ' + id +';');
         
     }
+
+
+    /**
+     * 
+     * @param {patient} patient the patient to add to the database
+     */
+
+    static async insert_patient(patient) {
+        const values = [
+            patient.FirstName,
+            patient.LastName,
+            patient.Birthdate,
+            patient.City,
+            patient.Street,
+            patient.HomeNumber,
+            patient.MobilePhone,
+            patient.Phone,
+            patient.StartSick,
+            patient.EndSick,
+            patient.ID
+          ];
+          console.log(patient);
+
+          await Database.database.query('INSERT INTO CovidSystem.Patients (FirstName, LastName,  Birthdate, City, Street, HomeNumber, MobilePhone, Phone, StartSick, EndSick, ID) VALUES \
+          (\"'+values[0]+ '\", \"'+ values[1]+ '\", \"'+ values[2]+ '\",\"'+ values[3]+'\", \"'+values[4] +'\", '+ values[5]+ ', \"'+values[6]+ '\", \"'+ values[7]+ '\", \"'+ values[8]+ '\", \"'+ values[9]+ '\",\"'+ values[10]+'\")');
+    }
+
+    static async add_vaccination(vaccination) {
+        const query = `insert into CovidSystem.Vaccinations (
+            VaccinationDate,
+            VaccinationNumber,
+            PatientID
+        ) values (?, ?, ?);`;
+        await Database.database.query(query, [vaccination.VaccinationDate, vaccination.VaccinationNumber, vaccination.PatientID]);
+    }
+//'insert into CovidSystem.Patients (FirstName, LastName, City, Street, HomeNumber, MobilePhone, Phone, Birthdate, StartSick, EndSick, ID) VALUES' + (patient.FirstName, patient.LastName, patient.City, patient.Street, patient.HomeNumber, patient.MobilePhone, patient.Phone, patient.Birthdate, patient.StartSick, patient.EndSick, patient.id
 
 }
 
