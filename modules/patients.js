@@ -1,9 +1,9 @@
 class Patient {
-    constructor(FirstName, LastName, BirthDate, City, Street, HomeNumber, MobilePhone, Phone, StartSick, EndSick, ID) {
+    constructor(FirstName, LastName, Birthdate, City, Street, HomeNumber, MobilePhone, Phone, StartSick, EndSick, ID) {
         
         this.FirstName = FirstName;
         this.LastName = LastName;
-        this.BirthDate = BirthDate;
+        this.Birthdate = Birthdate;
         this.City = City;
         this.Street = Street;
         this.HomeNumber = HomeNumber;
@@ -15,7 +15,7 @@ class Patient {
     }
 
     static get_names() {
-        return ["FirstName", "LastName", "BirthDate", "City", "Street", "HomeNumber", "MobilePhone", "Phone",  "StartSick", "EndSick", "ID"];
+        return ["FirstName", "LastName", "Birthdate", "City", "Street", "HomeNumber", "MobilePhone", "Phone",  "StartSick", "EndSick", "ID"];
     }
 }
 

@@ -130,15 +130,25 @@ class Database {
           (\"'+values[0]+ '\", \"'+ values[1]+ '\", \"'+ values[2]+ '\",\"'+ values[3]+'\", \"'+values[4] +'\", '+ values[5]+ ', \"'+values[6]+ '\", \"'+ values[7]+ '\", \"'+ values[8]+ '\", \"'+ values[9]+ '\",\"'+ values[10]+'\")');
     }
 
-    static async add_vaccination(vaccination) {
-        const query = `insert into CovidSystem.Vaccinations (
-            VaccinationDate,
-            VaccinationNumber,
-            PatientID
-        ) values (?, ?, ?);`;
-        await Database.database.query(query, [vaccination.VaccinationDate, vaccination.VaccinationNumber, vaccination.PatientID]);
+
+
+    
+    /**
+     * 
+     * @param {vaccination} vaccination the patient to add to the database
+     */
+
+    static async insert_vaccination(vaccination) {
+        const values = [
+            vaccination.VaccinationDate,
+            vaccination.VaccinationNumber,
+            vaccination.PatientID
+          ];
+          console.log(patient, 'patient');
+
+          await Database.database.query('INSERT INTO CovidSystem.Vaccinations (VaccinationDate, VaccinationNumber, PatientID) VALUES \
+          (\"'+ values[0]+ '\",'+ values[1]+ ',\"'+ values[2]+'\")');
     }
-//'insert into CovidSystem.Patients (FirstName, LastName, City, Street, HomeNumber, MobilePhone, Phone, Birthdate, StartSick, EndSick, ID) VALUES' + (patient.FirstName, patient.LastName, patient.City, patient.Street, patient.HomeNumber, patient.MobilePhone, patient.Phone, patient.Birthdate, patient.StartSick, patient.EndSick, patient.id
 
 }
 

@@ -24,20 +24,18 @@ async function insert_patient(firstName, lastName, birthdate, city, street,homeN
 }
 
 
-async function add_vaccination(vacc){
+async function insert_vaccination(vaccinationDate, vaccinationNumber, patientID){
     const body = {
-        'VaccinationDate': vacc.VaccinationDate,
-        'VaccinationNumber': vacc.VaccinationNumber,
-        'PatientID': vacc.PatientID
+        'VaccinationDate': vaccinationDate,
+        'VaccinationNumber':  vaccinationNumber,
+        'PatientID': patientID
     }
-    const response = await fetch('http://localhost:' + port + '/ListVaccination', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      console.log(response.status);
-  console.log(await response.text());
+    const response = await fetch('http://localhost:' + port + '/InsertVaccination', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),});
+    console.log(response.status);
+    console.log(await response.text());
 }
+
+
 
 async function getPatient(id) {
     const response = await fetch('http://localhost:' + port + '/GetPatient?id=' + id);
@@ -93,4 +91,5 @@ async function deleteAllVaccination() {
 
 
 
-console.log(insert_patient('t', 'l', '01.03.2020', 's', 'hh', 5, '78999', '55555', '01.03.2020', '01.03.2020', 55555));
+console.log(insert_vaccination( '01.03.2020', 5, 55555));
+

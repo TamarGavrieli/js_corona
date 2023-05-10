@@ -20,14 +20,6 @@ app.post('/InsertPatient' ,async (req, res) => {
             res.status(400).send('Bad Request');
             return;
         }
-        // for (const name of patient.get_names()) {
-        //     console.log(data);
-        //     if (!data[name]) {
-        //         res.status(400).send('Bad Request');
-        //         return;
-        //     }
-        // }
-        
         const new_patient = new patient(
             data['FirstName'], data['LastName'],data['Birthdate'],
             data['City'], data['Street'], data['HomeNumber'],
@@ -45,30 +37,43 @@ app.post('/InsertPatient' ,async (req, res) => {
     res.status(200).send('OK');
 });
 
-app.post('/ListVaccination', (req, res) => {
-    if (req.is('json')) {
+app.post('/InsertVaccination' ,async (req, res) => {
+    try 
+    {
         const data = req.body;
-        for (const name of vaccination.get_names()) {
-            if (!(name in data)) {
-                res.status(400).send('Bad Request');
-            }
+        console.log(data, 'data')
+        if(vaccination.get_names().some(name=>!data[name])){
+            res.status(400).send('Bad Request');
+            return;
+        }
+        const id=data['PatientID'];
+        let the_patient = await database.get_patient(id);
+        if (the_patient.length === 0){
+            res.status(400).send('There is no patient with id '+ id +' in the system');
+            return;
+
         }
         if (data['VaccinationNumber'] > 4 || data['VaccinationNumber'] < 1) {
             res.status(400).json({ message: 'Vaccination number must be between 1 and 4' });
+            return;
         }
+
         const new_vaccination = new vaccination(
             data['VaccinationDate'], data['VaccinationNumber'],data['PatientID']
         );
-        try {database.add_vaccination(new_vaccination);
-        } 
-        
-        catch (e) {
-            console.log(e);
-            res.status(500).json({ error: e.toString() });
-        }
-        res.status(200).send('OK');
+        console.log(new_vaccination);
+        database.insert_vaccination(new_vaccination);
+    }       
+    catch (e) {
+        console.log(e);
+        res.status(500).json({ error: e.toString() });
+        return;        
     }
+    res.status(200).send('OK');
 });
+
+
+
 
 app.get('/GetPatient', async (req, res) => {
     let the_patient = {};

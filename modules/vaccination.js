@@ -6,7 +6,7 @@ class Vaccination {
     }
   
     static get_names() {
-      return ["PatientID", "VaccinationDate", "VaccinationNumber"];
+      return ["VaccinationDate", "VaccinationNumber", "PatientID"];
     }
   }
   
