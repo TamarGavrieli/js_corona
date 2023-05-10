@@ -48,7 +48,7 @@ app.post('/InsertVaccination' ,async (req, res) => {
         }
         const id=data['PatientID'];
         let the_patient = await database.get_patient(id);
-        if (the_patient.length === 0){
+        if (the_patient=== null || the_patient === undefined){
             res.status(400).send('There is no patient with id '+ id +' in the system');
             return;
 

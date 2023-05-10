@@ -91,5 +91,5 @@ async function deleteAllVaccination() {
 
 
 
-console.log(insert_vaccination( '01.03.2020', 5, 55555));
+console.log(insert_vaccination( '01.03.2020', 1, 787));
 
