@@ -24,11 +24,12 @@ async function insert_patient(firstName, lastName, birthdate, city, street,homeN
 }
 
 
-async function insert_vaccination(vaccinationDate, vaccinationNumber, patientID){
+async function insert_vaccination(vaccinationDate, vaccinationNumber, patientID, manufacturer){
     const body = {
         'VaccinationDate': vaccinationDate,
         'VaccinationNumber':  vaccinationNumber,
-        'PatientID': patientID
+        'PatientID': patientID, 
+        'Manufacturer': manufacturer
     }
     const response = await fetch('http://localhost:' + port + '/InsertVaccination', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),});
     console.log(response.status);
@@ -91,5 +92,7 @@ async function deleteAllVaccination() {
 
 
 
-console.log(insert_vaccination( '01.03.2020', 1, 322533977));
+
+
+console.log(insert_patient( 'tami', 'tami','08.03.2021', 'hh', 'gg', 2, '5555', '88888', '10.10.2020', '14.12.2021', 322533977));
 

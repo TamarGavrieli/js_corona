@@ -15,11 +15,23 @@ app.post('/InsertPatient' ,async (req, res) => {
     try 
     {
         const data = req.body;
+        const the_patient=await database.get_patient(data['ID']);
+        if (the_patient){
+            res.status(400).send('There is a user for this id '+ data['ID'] +' in the system');
+            return;
+
+        }
         console.log(data)
         if(patient.get_names().some(name=>!data[name])){
             res.status(400).send('Bad Request');
             return;
         }
+       
+        if(!isValidDate(data['Birthdate'])){
+            res.status(400).json({ message: 'Birthdate must be in correct format' });
+            return;
+        }
+
         const new_patient = new patient(
             data['FirstName'], data['LastName'],data['Birthdate'],
             data['City'], data['Street'], data['HomeNumber'],
@@ -53,13 +65,46 @@ app.post('/InsertVaccination' ,async (req, res) => {
             return;
 
         }
+        let the_vac_number = await database.get_vaccinations_number(id);
+        console.log(the_vac_number);
         if (data['VaccinationNumber'] > 4 || data['VaccinationNumber'] < 1) {
             res.status(400).json({ message: 'Vaccination number must be between 1 and 4' });
             return;
         }
 
+        if (the_vac_number=== null || the_vac_number === undefined){
+            if (!data['VaccinationNumber']==1){
+                res.status(400).send('There is no vaccinations yet, insert vaccination number 1');
+                return;
+            }
+            else{
+                console.log(new_vaccination);
+                database.insert_vaccination(new_vaccination);
+                return;
+            }
+        }
+
+        if (data['VaccinationNumber'] <= the_vac_number[the_vac_number.length-1].VaccinationNumber) {
+            res.status(400).json({ message: 'You already have a number vaccine '+ data['VaccinationNumber'] });
+            return;
+        }
+
+        if (data['VaccinationNumber'] > the_vac_number[the_vac_number.length-1].VaccinationNumber +1) {
+            res.status(400).json({ message: 'You have to insert a number vaccine '+ (the_vac_number[the_vac_number.length-1].VaccinationNumber +1) + ' before a number vaccine ' + (data['VaccinationNumber'])});
+            return;
+        }
+        if (!isValidDate(data['VaccinationDate'])) {
+            res.status(400).json({ message: 'Vaccination Date must be in correct format' });
+            return;
+        }
+        if (!vaccination.get_manufacturer().includes(data['Manufacturer'])) {
+            res.status(400).json({ message: 'Manufacturer must be one of thses manufacturer: Pfizer, Moderna, Johnson & Johnson' });
+            return;
+        }
+
+
         const new_vaccination = new vaccination(
-            data['VaccinationDate'], data['VaccinationNumber'],data['PatientID']
+            data['VaccinationDate'], data['VaccinationNumber'] ,data['PatientID'] ,data['Manufacturer']
         );
         console.log(new_vaccination);
         database.insert_vaccination(new_vaccination);
@@ -234,6 +279,23 @@ app.delete('/DeletePatient', async (req, res) => {
     }
 });
 
+function isValidDate(dateStr) {
+    const dateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+    const match = dateStr.match(dateRegex); 
+    if (!match) {
+      return false;
+    }
+    const [, day, month, year] = match;
+    const date = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    if (isNaN(date.getTime())) {
+      return false;
+    }
+    const now = new Date();
+    if (date > now) {
+      return false;
+    } 
+    return true;
+  }
 
 
 
@@ -241,4 +303,4 @@ app.listen(3005, () => {
     console.log('Server listening on port 3005');
 });
 
-    
+  

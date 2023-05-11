@@ -45,9 +45,10 @@ class Database {
             return;
         }
         const query = `create table CoronaSystem.Vaccinations (
-            PatientID varchar(9) not null,
             VaccinationDate date not null,
             VaccinationNumber int not null,
+            atientID varchar(9) not null,
+            Manufacturer text not null,
             constraint Vaccinations primary key (PatientID, VaccinationNumber),
             constraint PatientID foreign key (PatientID) references CovidSystem.Patients (ID)
         );`;
@@ -86,7 +87,11 @@ class Database {
         const [rows] = await Database.database.query('select * from CovidSystem.Vaccinations;');
         return rows;
     }
-
+    static async get_vaccinations_number(PatientID) {
+        const [rows] = await Database.database.query('select VaccinationNumber from CovidSystem.Vaccinations where PatientID = ' + PatientID +';');
+        return rows.sort((a, b) => a.VaccinationNumber - b.VaccinationNumber);
+        
+    }
 
     static async delete_all_vaccinations() {
         await Database.database.query('DELETE FROM CovidSystem.Vaccinations;');
@@ -142,12 +147,13 @@ class Database {
         const values = [
             vaccination.VaccinationDate,
             vaccination.VaccinationNumber,
-            vaccination.PatientID
+            vaccination.PatientID, 
+            vaccination.Manufacturer
           ];
           
 
-          await Database.database.query('INSERT INTO CovidSystem.Vaccinations (VaccinationDate, VaccinationNumber, PatientID) VALUES \
-          (\"'+ values[0]+ '\",'+ values[1]+ ',\"'+ values[2]+'\")');
+          await Database.database.query('INSERT INTO CovidSystem.Vaccinations (VaccinationDate, VaccinationNumber, PatientID, Manufacturer) VALUES \
+          (\"'+ values[0]+ '\",'+ values[1]+ ',\"'+ values[2]+'\", \"'+ values[3]+ '\")');
     }
 
 }
