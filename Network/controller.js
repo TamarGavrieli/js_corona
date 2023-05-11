@@ -1,9 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const database= require('./database').Database;
-const patient = require('./patients').Patient;
-const vaccination = require('./vaccination').Vaccination;
+const database= require('../DB/database').Database;
+const patient = require('../DB/patients').Patient;
+const vaccination = require('../DB/vaccination').Vaccination;
 
 
 
@@ -22,16 +22,26 @@ app.post('/InsertPatient' ,async (req, res) => {
 
         }
         console.log(data)
-        if(patient.get_names().some(name=>!data[name])){
-            res.status(400).send('Bad Request');
-            return;
+        if(patient.get_must_names().some(name=>!data[name])){
+           res.status(400).send('Bad Request');
+           return;
         }
-       
         if(!isValidDate(data['Birthdate'])){
             res.status(400).json({ message: 'Birthdate must be in correct format' });
             return;
         }
+        if (!data['StartSick'] === null&& !data['EndSick'] === null ) {
+            if(!isValidDate(data['StartSick'])||!isValidDate(data['EndSick']) ){
+                res.status(400).json({ message: 'The date of receiving a positive result and the date of recovery from the disease must be valid' });
+                return;
+            } return;
+        } 
 
+        if(!isValidNumber(data['MobilePhone'])||!isValidNumber(data['Phone'])){
+            res.status(400).json({ message: 'MobilePhone and Phone must be in correct format' });
+            return;
+        }
+       
         const new_patient = new patient(
             data['FirstName'], data['LastName'],data['Birthdate'],
             data['City'], data['Street'], data['HomeNumber'],
@@ -233,8 +243,29 @@ app.get('/GetPatient', async (req, res) => {
     }
   });
   
-
+/*
+  app.get('/GetPatientsNotVac', async (req, res) => {
+    try {
+        const vaccs = await database.get_patients_not_vac();
+        if (vaccs === null||vaccs.length==0) {
+            res.status(400).json({ message:'NO pat' });
+            return;
+        } 
+        
+    } 
+    catch (e) {
+        console.log(e);
+        res.status(500).json({ error: e.toString() });
+    }
+    if (vaccination===null){
+        res.status(404).json({ message: e.toString() });
+    } 
+    res.status(200).json({vaccs});     
+    
+  });
   
+  */
+
   app.delete('/DeleteVaccinations', async (req, res) => { 
     try {
 
@@ -298,6 +329,11 @@ function isValidDate(dateStr) {
   }
 
 
+function isValidNumber(phoneNumber) {
+    const israeliPhoneNumberRegex = /^(?:\+972|0)(?:-)?(?:5[02-9]|[2-489])-?(?:\d{7}|\d{3}-\d{4})$/;
+    return israeliPhoneNumberRegex.test(phoneNumber);
+}
+  
 
 app.listen(3005, () => {
     console.log('Server listening on port 3005');

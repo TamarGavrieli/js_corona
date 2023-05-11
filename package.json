@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server":"node modules/server.js",
-    "client":"node modules/client.js"
+    "server":"node Network/controller.js",
+    "client":"node Network/client.js"
   },
   "author": "",
   "license": "ISC",

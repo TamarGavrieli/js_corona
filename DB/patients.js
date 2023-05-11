@@ -7,8 +7,8 @@ class Patient {
         this.City = City;
         this.Street = Street;
         this.HomeNumber = HomeNumber;
-        this.MobilePhoneNumber = MobilePhone;
-        this.PhoneNumber = Phone;
+        this.MobilePhone = MobilePhone;
+        this.Phone = Phone;
         this.StartSick = StartSick;
         this.EndSick = EndSick;
         this.ID = ID;
@@ -16,6 +16,9 @@ class Patient {
 
     static get_names() {
         return ["FirstName", "LastName", "Birthdate", "City", "Street", "HomeNumber", "MobilePhone", "Phone",  "StartSick", "EndSick", "ID"];
+    }
+    static get_must_names() {
+        return ["FirstName", "LastName", "Birthdate", "City", "Street", "HomeNumber", "MobilePhone", "Phone", "ID"];
     }
 }
 

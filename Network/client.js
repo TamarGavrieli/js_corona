@@ -1,10 +1,10 @@
-const database= require('./database')
-const patient = require('./patients');
-const vaccination = require('./vaccination');
+const database= require('../DB/database')
+const patient = require('../DB/patients');
+const vaccination = require('../DB/vaccination');
 
 const port = 3005
 
-async function insert_patient(firstName, lastName, birthdate, city, street,homeNumber, mobilePhone, phone, startSick, endSick, id){
+async function insert_patient(firstName, lastName, birthdate, city, street,homeNumber, mobilePhone, phone, startSick= null, endSick= null, id){
     const body = {
         'FirstName': firstName,
         'LastName': lastName,
@@ -64,9 +64,13 @@ async function getAllVaccination() {
     console.log(response.status);
     console.log(await response.text());
 }
-
-
-
+/*
+async function getPatientsNotVac() {
+    const response = await fetch('http://localhost:' + port + '/GetPatientsNotVac');
+    console.log(response.status);
+    console.log(await response.text());
+}
+*/
 async function deleteVaccination(patientID) {
     const response = await fetch('http://localhost:' + port + '/DeleteVaccinations?patientID=' + patientID,   {method: 'DELETE'});
     console.log(response);
@@ -94,5 +98,5 @@ async function deleteAllVaccination() {
 
 
 
-console.log(insert_patient( 'tami', 'tami','08.03.2021', 'hh', 'gg', 2, '5555', '88888', '10.10.2020', '14.12.2021', 322533977));
+console.log(getPatient(322533977));
 

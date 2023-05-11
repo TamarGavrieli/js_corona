@@ -92,6 +92,14 @@ class Database {
         return rows.sort((a, b) => a.VaccinationNumber - b.VaccinationNumber);
         
     }
+/*
+
+    static async get_patients_not_vac() {
+        const [rows] = await Database.database.query('SELECT ID FROM CovidSystem.Patients WHERE ID NOT IN (SELECT PatientID FROM CovidSystem.Vaccinations)');
+        return rows;
+      }
+      
+*/
 
     static async delete_all_vaccinations() {
         await Database.database.query('DELETE FROM CovidSystem.Vaccinations;');
@@ -150,8 +158,6 @@ class Database {
             vaccination.PatientID, 
             vaccination.Manufacturer
           ];
-          
-
           await Database.database.query('INSERT INTO CovidSystem.Vaccinations (VaccinationDate, VaccinationNumber, PatientID, Manufacturer) VALUES \
           (\"'+ values[0]+ '\",'+ values[1]+ ',\"'+ values[2]+'\", \"'+ values[3]+ '\")');
     }
